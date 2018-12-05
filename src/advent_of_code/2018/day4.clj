@@ -37,6 +37,40 @@
        (copy-ids)))
 
 
+ (defn total-sleep-time
+   [[id events-for-guard]]
+   [id (first (reduce
+               (fn [[sleep-time start-minute last-event] e]
+                 (cond
+                   (and (= (:event-type e) :sleep) (not= last-event :sleep)) [sleep-time (:minute e) (:event-type e)]
+                   (and (= last-event :sleep) (not= (:event-type e) :sleep)) [(+ sleep-time (- (:minute e) start-minute)) (:minute e) (:event-type e)]
+                   :else [sleep-time start-minute last-event]))
+               [0 0 :wake-up]
+               events-for-guard))]) 
+
+(defn max-sleeper [] 
+  (->> event-log
+       (group-by :id)
+       (map total-sleep-time)
+       (sort-by second)
+       (last)))
+ (max-sleeper)
+
+(defn common-time
+  [id]
+  (->> event-log
+       (filter #(and (= (:id %) id) (= (:event-type %) :sleep)))
+       (group-by (juxt :hour :minute))
+       (sort-by (fn [[_ v]] (count v)))
+       last
+       first
+       second))
+
+(def part1
+  (let [[guard-id _] (max-sleeper)
+        minute (common-time guard-id)]
+       (* guard-id minute)))
+
 (defn- get-sleep-time
   [[id all-events]]
   [id (count (filter #(= (:event-type %) :sleep) all-events))])
@@ -62,13 +96,3 @@
                     first
                     second)]
        (* sleeper minute)))
-
-
-(count event-log)
-(take 10 event-log)
-(first event-log)
-(last event-log)
-
-
-
-
