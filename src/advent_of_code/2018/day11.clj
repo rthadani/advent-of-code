@@ -1,14 +1,5 @@
 (ns advent-of-code.2018.day11)
 
-; For example, to find the power level of the fuel cell at 3,5 in a grid with serial number 8:
-
-;     The rack ID is 3 + 10 = 13.
-;     The power level starts at 13 * 5 = 65.
-;     Adding the serial number produces 65 + 8 = 73.
-;     Multiplying by the rack ID produces 73 * 13 = 949.
-;     The hundreds digit of 949 is 9.
-;     Subtracting 5 produces 9 - 5 = 4.
-
 (defn power-level 
   [x y serial]
   (-> (+ x 10)
@@ -26,15 +17,20 @@
          (vec (for [x (range 1 301)]
                 (power-level x y serial))))))
 
-(defn get-box
+#_(defn get-box
   [matrix x y block-size]
   (for [y (range y (+ y block-size))
         x (range x (+ x block-size))]
     (get-in matrix [y x])))
 
+(defn get-box
+  [matrix x y block-size]
+  (for [y (range y (+ y block-size))]
+    (subvec (matrix y) x (+ x block-size))))
+
 (defn box-power
   [box]
-  (apply + box))
+  (reduce (fn [s row] (+ s (apply + row) )) 0 box))
 
 (defn all-boxes-power
   [block-size matrix]
@@ -42,7 +38,7 @@
         x (range 0 (- 300 block-size))]
     [[(inc x) (inc y) block-size] (box-power (get-box matrix x y block-size))]))
 
-(def part1 
+#_ (def part1 
   (->> (make-matrix 3628)
        (all-boxes-power 3)
        (apply max-key second)
@@ -50,10 +46,11 @@
        (take 2)))
 
 
-(def part2
+#_ (def part2
   (let [matrix (make-matrix 3628)]
-    (->> (range 1 301)
+    (->> (range 1 300)
          (pmap #(apply max-key second (all-boxes-power % matrix)))
-         (apply max-key second))))
+         (apply max-key second)
+         first)))
 
   
