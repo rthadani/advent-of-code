@@ -17,12 +17,6 @@
          (vec (for [x (range 1 301)]
                 (power-level x y serial))))))
 
-#_(defn get-box
-  [matrix x y block-size]
-  (for [y (range y (+ y block-size))
-        x (range x (+ x block-size))]
-    (get-in matrix [y x])))
-
 (defn get-box
   [matrix x y block-size]
   (for [y (range y (+ y block-size))]
@@ -32,25 +26,29 @@
   [box]
   (reduce (fn [s row] (+ s (apply + row) )) 0 box))
 
-(defn all-boxes-power
-  [block-size matrix]
+(defn boxes
+  [block-size]
   (for [y (range 0 (- 300 block-size))
         x (range 0 (- 300 block-size))]
-    [[(inc x) (inc y) block-size] (box-power (get-box matrix x y block-size))]))
+    [(inc x) (inc y) block-size]))
+
+(defn box-powers
+  [matrix boxes]
+  (pmap (fn [[x y size]] [[(inc x) (inc y) size] (box-power (get-box matrix x y size))])  boxes))
+
 
 #_ (def part1 
-  (->> (make-matrix 3628)
-       (all-boxes-power 3)
-       (apply max-key second)
-       first
-       (take 2)))
-
-
-#_ (def part2
   (let [matrix (make-matrix 3628)]
-    (->> (range 1 300)
-         (pmap #(apply max-key second (all-boxes-power % matrix)))
+    (->> (boxes 3)
+         (box-powers matrix)
          (apply max-key second)
-         first)))
+         first
+         (take 2))))
 
-  
+#_(def part2
+  (let [matrix (make-matrix 3628)]
+    (->>
+     (range 1 300)
+     (pmap #(apply max-key second (box-powers matrix (boxes %))))
+     (apply max-key second)
+     first)))
