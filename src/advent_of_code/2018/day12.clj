@@ -1,6 +1,5 @@
 (ns advent-of-code.2018.day12
-  (:require [clojure.string :as str]
-            [advent-of-code.2018.utils :refer [nth']]))
+  (:require [clojure.string :as str]))
 
 (defn parse-rule
   [result rule]
@@ -59,7 +58,7 @@
   (as-> (slurp "resources/2018/input12") $
     (init-state $)
     (iterate next-state $)
-    (nth' $ generations)
+    (nth $ generations)
     (live-pots $)
     (keys $)
     (apply + $)))
