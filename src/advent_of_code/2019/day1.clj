@@ -1,12 +1,12 @@
 (ns advent-of-code.2019.day1
-  (:require [com.rpl.specter :refer :all]
+  (:require [com.rpl.specter :as s]
             [clojure.string :as str]))
             
 
 (defn read-input [file]
   (as-> (slurp file) $
     (str/split $ #"\n")
-    (transform [ALL] #(Integer/parseInt %) $)))
+    (s/transform [s/ALL] #(Integer/parseInt %) $)))
 
 (def input (read-input "resources/2019/input1"))
 
@@ -26,7 +26,7 @@
 
 (defn fuel-calculator 
   [massfn]
-  (->> (transform [ALL] massfn input)
+  (->> (s/transform [s/ALL] massfn input)
        (apply +)))
 
 ;;part1
