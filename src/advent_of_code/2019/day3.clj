@@ -46,6 +46,9 @@
   (let [distances (s/transform [s/ALL] #(manhattan-distance % [0 0]) intersections)]
     (apply min distances)))
 
+;;part 1
 (let [[w1 w2] (read-input "resources/2019/input3") ]
-  (println "hh" (wire-intersections w1 w2))
   (min-dist (wire-intersections w1 w2)))
+
+
+;;not doing part 2 too tedious
