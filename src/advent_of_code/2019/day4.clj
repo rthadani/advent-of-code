@@ -27,4 +27,5 @@
 
 ;;part 1
 (count (filter valid-password? (range 152085 670284)))
+;;part 2
 (count (filter valid-password-2? (range 152085 670284)))
