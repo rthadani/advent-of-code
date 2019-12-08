@@ -1,4 +1,4 @@
-(ns advent-ofcode.2019.day5
+(ns advent-of-code.2019.day5
   (:require [clojure.string :as str]
             [com.rpl.specter :as s]))
 
@@ -14,45 +14,43 @@
 (defn get-value
   [param operation program]
   (case param
-    :c (if (= 0 (get operation param)) (nth program (nth program (+ (get operation :index) 1))) (nth program (+ (get operation :index) 1)))
-    :b (if (= 0 (get operation param)) (nth program (nth program (+ (get operation :index) 2))) (nth program (+ (get operation :index) 2)))
-    :a (if (= 0 (get operation param)) (nth program (nth program (+ (get operation :index) 3))) (nth program (+ (get operation :index) 3)))))
+    :c (if (= 0 (get operation param)) (nth program (nth program (+ (:index operation) 1))) (nth program (+ (:index operation) 1)))
+    :b (if (= 0 (get operation param)) (nth program (nth program (+ (:index operation) 2))) (nth program (+ (:index operation) 2)))
+    :a (if (= 0 (get operation param)) (nth program (nth program (+ (:index operation) 3))) (nth program (+ (:index operation) 3)))))
 
 (defn code-add
   [program operation]
-  (replace-value (nth program (+ 3 (get operation :index))) (+ (get-value :c operation program) (get-value :b operation program)) program))
+  (replace-value (nth program (+ 3 (:index operation))) (+ (get-value :c operation program) (get-value :b operation program)) program))
 
 (defn code-mul
   [program operation]
-  (replace-value (nth program (+ 3 (get operation :index))) (* (get-value :c operation program) (get-value :b operation program)) program))
+  (replace-value (nth program (+ 3 (:index operation))) (* (get-value :c operation program) (get-value :b operation program)) program))
 
 (defn code-input
   [program operation input]
-  (replace-value (nth program (+ 1 (get operation :index))) input program))
+  (replace-value (nth program (+ 1 (:index operation))) input program))
 
 (defn code-output
-  [program operation]
-  (do
-    (println (get-value :c operation program))
-    program))
+  [program _]
+  program)
 
 (defn code-jump-false
   [operation program]
-  (if (= 0 (get-value :c operation program)) (get-value :b operation program) (+ 3 (get operation :index))))
+  (if (= 0 (get-value :c operation program)) (get-value :b operation program) (+ 3 (:index operation))))
 
 (defn code-jump-true
   [operation program]
-  (if (not= 0 (get-value :c operation program)) (get-value :b operation program) (+ 3 (get operation :index))))
+  (if (not= 0 (get-value :c operation program)) (get-value :b operation program) (+ 3 (:index operation))))
 
 (defn code-less
   [operation program]
   (let [value (if (< (get-value :c operation program) (get-value :b operation program)) 1 0)]
-    (replace-value (nth program (+ 3 (get operation :index))) value program)))
+    (replace-value (nth program (+ 3 (:index operation))) value program)))
 
 (defn code-equal
   [operation program]
   (let [value (if (= (get-value :c operation program) (get-value :b operation program)) 1 0)]
-    (replace-value (nth program (+ 3 (get operation :index))) value program)))
+    (replace-value (nth program (+ 3 (:index operation))) value program)))
 
 (defn digits
   [number]
@@ -72,13 +70,13 @@
     {:de (get-op-code digits) :c (get-param-mode digits 2) :b (get-param-mode digits 1) :a (get-param-mode digits 0) :index index}))
 
 (defn apply-code
-  [program index input]
+  [program index input input-count]
   (let [operation (get-operation program index)]
     (case (get operation :de)
       1 {:step (+ 4 index) :program (code-add program operation)}
       2 {:step (+ 4 index) :program (code-mul program operation)}
-      3 {:step (+ 2 index) :program (code-input program operation input)}
-      4 {:step (+ 2 index) :program (code-output program operation)}
+      3 {:step (+ 2 index) :program (code-input program operation input) :cnt (inc input-count)}
+      4 {:step (+ 2 index) :program (code-output program operation) :output (get-value :c operation program)}
       5 {:step (code-jump-true operation program) :program program}
       6 {:step (code-jump-false operation program) :program program}
       7 {:step (+ 4 index) :program (code-less operation program)}
@@ -86,12 +84,14 @@
       99 :done)))
 
 (defn run-program
-  [program pointer input]
-  (let [result (apply-code program pointer input)]
+  [program pointer inputs input-count output]
+  (let [result (apply-code program pointer (get inputs input-count) input-count)]
+    (println input-count)
     (if (= result :done)
-      program
-      (recur (get result :program) (get result :step) input))))
+      output
+      (recur (:program result) (:step result) inputs (if (:cnt result) (:cnt result) input-count) (:output result)))))
 
-(def part1 (run-program (read-input "resources/2019/input5") 0 1))
-
-(def part2 (run-program (read-input "resources/2019/input5") 0 5))
+;;part 1
+(run-program (read-input "resources/2019/input5") 0 [1] 0 nil)
+;;part 2
+(run-program (read-input "resources/2019/input5") 0 [5] 0 nil)
