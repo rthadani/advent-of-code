@@ -30,6 +30,5 @@
       (apply interleave)
       (partition (count layers))
       (map (fn [pixels] (first (filter #(not= % \2) pixels))))
-      (apply str)
       (map #(if (= % \1) "#" " "))
       (partition 25))
