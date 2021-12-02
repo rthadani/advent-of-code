@@ -25,12 +25,12 @@
     "down" [h v (+ a cnt)]))
 
 ;;2.1
-(->> (read-input "resources/2021/input2")
+(->> (read-input "resources/2021/input2") ;; => 1938402
      (reduce update-pos [0 0])
      (apply *))
 
 ;;2.2
-(->> (read-input "resources/2021/input2")
+(->> (read-input "resources/2021/input2") ;; => 1947878632
      (reduce update-with-aim [0 0 0])
      (take 2)
      (apply *))

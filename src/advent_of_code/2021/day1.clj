@@ -7,13 +7,13 @@
     (map #(Integer/parseInt %) $)))
 
 ;;day1.1
-(->> (read-input "resources/2021/input1")
+(->> (read-input "resources/2021/input1") ;; => 1521
      (partition 2 1)
      (filter (fn [[f s]] (> s f)))
      count)
 
 ;;day 1.2
-(->> (read-input "resources/2021/input1")
+(->> (read-input "resources/2021/input1") ;; => 1543
      (partition 3 1)
      (map #(apply + %))
      (partition 2 1)
