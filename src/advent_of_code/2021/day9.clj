@@ -19,7 +19,7 @@
 
 (defn low-points
   [mat]
-  (reduce ;; => 486
+  (reduce
    (fn [low-points [x y]]
      (let [neighbors (neighbors mat x y)]
        (if (every? #(< (get-in mat [x y]) %) neighbors)
