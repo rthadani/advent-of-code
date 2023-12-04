@@ -6,7 +6,6 @@
   (as-> (slurp file) $
         (str/split $ #"\n")))
 
-
 (defn parse-line
   [game]
   (let [game-id (->> game (re-find #"Game (\d+)") last (Integer/parseInt))
