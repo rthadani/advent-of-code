@@ -18,16 +18,14 @@
        (filter #(> (run-boat % time) distance))
        count))
 
-(wins [7 9])
-
 ;;part 1
 (->> (read-input "resources/2023/input6")
      (map wins)
-     (apply *)) ;293046
+     (apply *)) ; 293046
 
-;;this wont work but im too tired
+;;part 2 
 (->> (read-input "resources/2023/input6")
      (reduce (fn [[t d] [it id]] [(str t it) (str d id)]) [])
      (mapv #(Long/parseLong %))
-     (map wins))
+     (wins)) ; 35150181
 
