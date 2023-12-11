@@ -21,7 +21,7 @@
 
 (defn hand-type
   [hand consider-joker?]
-  (let [hand-to-judge (if (and consider-joker? (str/includes? hand "J"))
+  (let [hand-to-judge (if (and consider-joker? (str/includes? hand "J") (not-every? #(= % \J) hand))
                         (let [ls (->> hand frequencies (sort-by (comp - second)))
                               max-frequency-letter (str (if (= \J (ffirst ls)) (ffirst (next ls)) (ffirst ls)))]
                          #_(prn (->> hand frequencies (sort-by (comp - second))) max-frequency-letter) 
@@ -52,12 +52,7 @@
      (apply +))   ; 250946742
 
 (->> (read-input "resources/2023/input7")
-     #_[["32T3K" 765]
-["T55J5" 684]
-["KK677" 28]
-["KTJJT" 220]
-["QQQJA" 483]]
      (sort-by first (comp - (partial compare-hands order-2 true)))
      (map-indexed (fn [i [_ b]] (* (inc i) b)))
-     (apply +)) 
+     (apply +))  ; 251825891
 
