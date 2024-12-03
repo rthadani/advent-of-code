@@ -6,7 +6,6 @@
   (->> (str/split-lines input)
        (reduce (fn [a l] 
                  (let [[f s] (str/split l #"\s+")]
-                   (prn f s)
                    [(conj (first a) (Integer/parseInt (str/trim f))) 
                     (conj (second a) (Integer/parseInt (str/trim s)))])) 
                [[] []])
@@ -22,4 +21,4 @@
 (let [similarity (frequencies (second input))]
   (->> (first input)
        (map #(* (or (get similarity %) 0) %))
-       (apply +))) ; 21306195
+       (reduce +))) ; 21306195

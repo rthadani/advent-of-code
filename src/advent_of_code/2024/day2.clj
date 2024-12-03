@@ -33,8 +33,6 @@
       (some ordered-and-within-range?
             (map #(into (subvec level 0 %) (subvec level (inc %)))(range (count level))))))
 
-(can-fix-level? [5 5 4 3 2 1])
-
 ;;1
 (->> input (filter ordered-and-within-range?) count) ; 483
 
